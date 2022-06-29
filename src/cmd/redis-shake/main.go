@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net/http"
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
@@ -113,6 +114,8 @@ func main() {
 	// create metric
 	metric.CreateMetric(runner)
 	go startHttpServer()
+	go startHttpServerLiveness()
+	go startHttpServerReadiness()
 
 	// print configuration
 	if opts, err := json.Marshal(conf.GetSafeOptions()); err != nil {
@@ -165,6 +168,22 @@ func startHttpServer() {
 	if err := utils.HttpApi.Listen(); err != nil {
 		crash(fmt.Sprintf("start http listen error[%v]", err), -4)
 	}
+}
+
+func startHttpServerLiveness() {
+	http.Handle("/liveness", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		_, _ = w.Write([]byte("OK"))
+	}))
+	http.ListenAndServe(fmt.Sprintf(":%d", 8080), nil)
+}
+
+func startHttpServerReadiness() {
+	http.Handle("/readiness", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		_, _ = w.Write([]byte("OK"))
+	}))
+	http.ListenAndServe(fmt.Sprintf(":%d", 8081), nil)
 }
 
 func crash(msg string, errCode int) {

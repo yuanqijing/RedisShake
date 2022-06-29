@@ -1,0 +1,100 @@
+replicaCount: 1
+
+image:
+  repository: harbor.middleware.com/middleware
+  pullPolicy: IfNotPresent
+  tag: dev
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources:
+   limits:
+     cpu: 100m
+     memory: 128Mi
+   requests:
+     cpu: 100m
+     memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+config:
+  id: redis-shake
+  log:
+    file: ""
+    level: debug
+  pid_path: ""
+  system_profile: 9310
+  http_profile: 9320
+  parallel: 32
+  source:
+    type: standalone
+    address: 127.0.0.1:20441
+    password_raw: ""
+    tls_enabled: false
+    tls_skip_verify: false
+    rdb:
+      input: ""
+      parallel: 0
+      special_cloud: ""
+  target:
+    type: standalone
+    address: "127.0.0.1:6379"
+    target_password_raw: ""
+    db: -1
+    dbmap: ""
+    tls_enabled: false
+    tls_skip_verify: false
+    rdb:
+      output: "local_dump"
+    version: ""
+
+  fake_time: ""
+  key_exists: "rewrite"
+
+  filter:
+    db:
+      whitelist: ""
+      blacklist: ""
+    key:
+      whitelist: ""
+      blacklist: ""
+    slot: ""
+    command:
+      whitelist: ""
+      blacklist: ""
+    lua: false
+
+  big_key_threshold: "524288000"
+
+  metric:
+    enable: true
+    print_log: false
+
+  sender:
+    size: "104857600"
+    count: 4095
+    delay_channel_size: 65535
+
+  keep_alive: 0
+
+  scan:
+    key_number: 100
+    special_cloud: ""
+    key_file: ""
+
+  qos: "200000"
+  resume_from_break_point: false

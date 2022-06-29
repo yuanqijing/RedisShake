@@ -1,0 +1,8 @@
+version: 0.1.0
+apiVersion: v2
+appVersion: "1.16.0"
+
+name: redis-shake
+description: redis-shake for Kubernetes
+
+type: application
