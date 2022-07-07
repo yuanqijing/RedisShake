@@ -3,8 +3,8 @@ package dbSync
 import "time"
 
 var (
-	incrSyncReadeTimeout = time.Duration(10) * time.Minute
-	incrSyncWriteTimeout = time.Duration(10) * time.Minute
+	incrSyncReadeTimeout = time.Duration(20) * time.Second
+	incrSyncWriteTimeout = time.Duration(20) * time.Second
 )
 
 type delayNode struct {

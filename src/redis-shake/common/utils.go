@@ -9,6 +9,7 @@ import (
 	"crypto/tls"
 	"encoding/binary"
 	"fmt"
+	"github.com/davecgh/go-spew/spew"
 	"io"
 	"math/rand"
 	"net"
@@ -25,8 +26,8 @@ import (
 	"github.com/alibaba/RedisShake/pkg/libs/stats"
 	"github.com/alibaba/RedisShake/pkg/rdb"
 	"github.com/alibaba/RedisShake/pkg/redis"
-
 	conf "github.com/alibaba/RedisShake/redis-shake/configure"
+	"k8s.io/klog/v2"
 
 	"github.com/FZambia/go-sentinel"
 	redigo "github.com/garyburd/redigo/redis"
@@ -96,6 +97,16 @@ func OpenNetConnSoft(target, authType, passwd string, tlsEnable bool) net.Conn {
 		return nil
 	}
 	AuthPassword(c, authType, passwd)
+	return c
+}
+
+func OpenNetConnSoftWithTimeout(target string, authType, passwd string, tlsEnable bool, readTimeout, writeTimeout time.Duration) net.Conn {
+	c := OpenNetConnSoft(target, authType, passwd, tlsEnable)
+	if c == nil {
+		return c
+	}
+	c.SetReadDeadline(time.Now().Add(readTimeout))
+	c.SetWriteDeadline(time.Now().Add(writeTimeout))
 	return c
 }
 
@@ -239,10 +250,12 @@ func SendPSyncContinue(br *bufio.Reader, bw *bufio.Writer, runid string, offset 
 	}
 
 	cmd := redis.NewCommand("psync", runid, offset)
+	klog.Infof("send psync runid = %s, offset = %d", runid, offset)
 	if err := redis.Encode(bw, cmd, true); err != nil {
 		log.PanicError(err, "write psync command failed, continue")
 	}
 	r, err := redis.Decode(br)
+	klog.Infof("recv psync response = %v", spew.Sdump(r))
 	if err != nil {
 		log.PanicError(err, "invalid psync response, continue")
 	}

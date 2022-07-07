@@ -97,4 +97,4 @@ config:
     key_file: ""
 
   qos: "200000"
-  resume_from_break_point: false
+  resume_from_break_point: true

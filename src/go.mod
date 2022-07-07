@@ -21,4 +21,5 @@ require (
 	golang.org/x/sys v0.0.0-20190904005037-43c01164e931 // indirect
 	gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0-20170531160350-a96e63847dc3
+	k8s.io/klog/v2 v2.70.0 // indirect
 )
